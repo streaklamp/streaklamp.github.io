@@ -30,6 +30,8 @@ export default class extends Stimulus.Controller {
     "23": "#701203",
   }
 
+  static BASE_URL = "https://kskyr7ruvacwhrf77kgmv3otge0izgtz.lambda-url.eu-north-1.on.aws"
+
   async check(event) {
     event.preventDefault()
     this.#displayMessage("lookup-in-progress")
@@ -105,7 +107,7 @@ export default class extends Stimulus.Controller {
   }
 
   async #findDuolingoUser(username) {
-    const endpoint = `https://www.duolingo.com/2017-06-30/users?username=${username}`
+    const endpoint = `${this.constructor.BASE_URL}?username=${username}`
 
     try {
       const response = await fetch(endpoint);
@@ -116,9 +118,9 @@ export default class extends Stimulus.Controller {
       }
 
       const data = await response.json();
-      return data["users"][0];
+      return data["body"]["data"]["users"][0];
     } catch (error) {
-      console.log("error trying to fetch Duolingo profile:", error);
+      console.log("Error trying to fetch Duolingo profile:", error);
       this.#displayMessage("error");
       return undefined;
     }
