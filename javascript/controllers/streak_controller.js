@@ -67,7 +67,7 @@ export default class extends Stimulus.Controller {
     const messages = {
       "broken-streak":           "oh no, it seems you've broken your streak 😿",
       "error":                   "oops, an error occurred while trying to find your profile. Please try again.",
-      "lookup-in-progress":      "looking for you Duolingo profile...",
+      "lookup-in-progress":      "looking for your Duolingo profile...",
       "streak-extended":         "congrats! you've extended your streak today",
       "streak-not-extended-yet": "Don't forget to practice today!",
       "user-not-found":          "We're sorry. We couldn't find your Duolingo profile.",
