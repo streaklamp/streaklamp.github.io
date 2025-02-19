@@ -1,61 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <title>Streak Lamp</title>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.2/dist/stimulus.umd.js"></script>
   <script src="/javascript/application.js" type="module"></script>
 
-  <title>Streak Lamp</title>
+  <style>
+    .lamp-shape {
+      clip-path: circle(50% at 50% 50%);
+      position: absolute;
+      left: 29%;
+      width: 35%;
+      height: 35%;
+      top: 50%;
+      mix-blend-mode: hue;
+    }
+  </style>
 </head>
-<body class="">
-  <div class="px-4 my-4">
-    <h1 class="text-2xl font-bold">Streak Lamp</h1>
+<body class="md:text-lg">
+  <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+    <div class="px-4 my-4">
+      <h1 class="text-2xl font-bold">Streak Lamp</h1>
 
-    <div class="my-4 flex flex-col gap-4">
-      <p class="text-justify">
-        Hey there! 👋<br><br>
-        We're Cécile, Nicolas and Mael and we're <strong>heavy users of Duolingo</strong> (at least Cecile!)<br>
-        Even though practicing has become a daily routine, from time to time we <strong>almost break our streak</strong> 😱
-      </p>
-      <p class="text-justify">
-        So we wondered, what if we had <strong>a way to not forget</strong> our streak?
-        What about something here in the real world that would <strong>remind us</strong> about it...
-      </p>
-      <p class="px-6 text-center text-xl">
-        Meet our new pet project, the Streak Lamp.
-      </p>
-      <p class="text-justify text-gray-900">
-        Discover a preview of what we're currently building&nbsp;👇
-      </p>
+      <div class="my-4 md:my-8 flex flex-col gap-4">
+        <p class="text-justify">
+          Hey there! 👋<br><br>
+          We're Cécile, Nicolas and Mael and we're <strong>heavy users of Duolingo</strong> (at least Cecile!)<br>
+          Even though practicing has become a daily routine, from time to time we <strong>almost break our streak</strong> 😱
+        </p>
+        <p class="text-justify">
+          So we wondered, what if we had <strong>a way to not forget</strong> our streak?
+          What about something here in the real world that would <strong>remind us</strong> about it...
+        </p>
+        <p class="px-6 text-center text-xl md:text-2xl md:my-6">
+          Meet our new pet project, the Streak Lamp.
+        </p>
+        <p class="text-justify text-gray-900">
+          Discover a preview of what we're currently building&nbsp;👇
+        </p>
+      </div>
     </div>
-  </div>
 
-  <div class="grid sm:grid-cols-1 md:grid-cols-2 w-full">
-    <div>
-      <img src="/images/lamp.jpg" alt="" class="w-full" width="100%">
-      <span class="px-4 italic text-sm text-gray-600">Not a binding representation</span>
-    </div>
-    <div class="p-4">
-      <form action="#">
-        <div class="mb-4">
-          <label for="username" class="block font-medium text-gray-900 mb-1">What's your Duolingo username?</label>
-          <input type="text" name="username" id="username" placeholder="eg. Cecile900074" class="block w-full bg-white border border-gray-300 focus:ring-purple focus:border-purple rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm">
+    <div data-controller="streak" class="md:px-4 grid sm:grid-cols-1 md:grid-cols-2 w-full">
+      <div>
+        <div class="relative">
+          <div data-streak-target="lampColor" class="lamp-shape hidden"></div>
+          <img src="/images/lamp.jpg" alt="" class="w-full" width="100%">
         </div>
+        <span class="px-4 md:px-0 italic text-sm text-gray-600">Not a binding representation</span>
+      </div>
+      <div class="p-4 md:pt-0 md:max-w-md flex flex-col md:flex-col-reverse md:justify-end gap-4 md:gap-6">
+        <p data-streak-target="message" class="font-bold text-lg text-center md:text-left"></p>
 
-        <button class="px-4 py-2 w-full md:w-min md:min-w-fit rounded bg-purple-500 text-white font-bold">Show me my streak</button>
-      </form>
+        <form action="#" data-action="streak#check">
+          <div class="mb-4">
+            <label for="username" class="block font-medium text-gray-900 mb-1">What's your Duolingo username?</label>
+            <input type="text" required name="username" id="username" placeholder="eg. Cecile900074" data-streak-target="usernameInput" class="block w-full bg-white border border-gray-300 focus:ring-purple focus:border-purple rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm">
+          </div>
+
+          <div class="flex flex-col md:flex-row gap-3">
+            <button class="px-4 py-2 w-full md:w-min md:min-w-fit rounded bg-purple-500 text-white font-bold hover:cursor-pointer hover:bg-purple-600">Show me my streak</button>
+            <button data-action="streak#reset" class="px-4 py-2 w-full md:w-min md:min-w-fit rounded ring-1 ring-gray-300 ring-inset text-gray-900 font-bold hover:cursor-pointer hover:bg-gray-50">Reset</button>
+          </div>
+        </form>
+      </div>
     </div>
+
+    <div class="px-4 mt-6">
+      <h2 class="font-bold text-2xl md:text-3xl">How does it work?</h2>
+
+      <div class="my-4 flex flex-col gap-4">
+        <p>
+          Our intent is to provide a physical object that will be your reminder in real life to not forget to practice.
+        </p>
+        <p class="md:mb-2">
+          It works based on a simple set of rules.
+        </p>
+
+        <dl class="grid grid-cols-1 md:grid-cols-3 gap-3 lg:max-w-4xl lg:mx-auto">
+          <div class="md:p-4 md:rounded md:border md:border-2 md:border-gray-400">
+            <dt class="font-bold text-gray-900 md:text-center md:text-lg">I haven't practiced yet today</dt>
+            <dd class="mt-1 md:text-center text-gray-900 sm:col-span-2 sm:mt-0">
+              The lamp will take a different color each hour that passes.
+            </dd>
+          </div>
+
+          <div class="md:p-4 md:rounded md:border md:border-2 md:border-gray-400">
+            <dt class="font-bold text-gray-900 md:text-center md:text-lg">I've already practiced today</dt>
+            <dd class="mt-1 md:text-center text-gray-900 sm:col-span-2 sm:mt-0">
+              The lamp acts as a regular lamp.
+            </dd>
+          </div>
+
+          <div class="md:p-4 md:rounded md:border md:border-2 md:border-gray-400">
+            <dt class="font-bold text-gray-900 md:text-center md:text-lg">I've broken my streak</dt>
+            <dd class="mt-1 md:text-center text-gray-900 sm:col-span-2 sm:mt-0">
+              The lamp takes a pink color until you start a new streak.
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <p class="px-4 mt-8 mb-4 md:text-center">
+      Follow our journey on
+
+      <a href="#" class="underline decoration-2 text-purple-500 font-medium">
+        Instagram
+      </a>
+    </p>
   </div>
-
-  <p class="px-4 mt-8 mb-4">
-    Follow our journey on
-
-    <a href="#" class="underline decoration-2 text-purple-500 font-medium">
-      Instagram
-    </a>
-  </p>
 </body>
 </html>
