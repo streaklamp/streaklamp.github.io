@@ -1,5 +1,6 @@
 export default class extends Stimulus.Controller {
   static targets = ["lampColor", "message", "usernameInput"]
+  static values  = { local: Boolean }
 
   static COLORS = {
     "broken": "#d7006c",
@@ -29,10 +30,11 @@ export default class extends Stimulus.Controller {
     "23": "#701203",
   }
 
-  check(event) {
+  async check(event) {
     event.preventDefault()
+    this.#displayMessage("lookup-in-progress")
 
-    const user = this.#findUser()
+    const user = await this.#findUser()
 
     if (user == undefined) { return this.#handleUserNotFound() }
 
@@ -61,10 +63,12 @@ export default class extends Stimulus.Controller {
 
   #displayMessage(key) {
     const messages = {
-      "broken-streak":           "oh not, it seems you've broken your streak 😿",
+      "broken-streak":           "oh no, it seems you've broken your streak 😿",
+      "error":                   "oops, an error occurred while trying to find your profile. Please try again.",
+      "lookup-in-progress":      "looking for you Duolingo profile...",
       "streak-extended":         "congrats! you've extended your streak today",
       "streak-not-extended-yet": "Don't forget to practice today!",
-      "user-not-found":          "We're sorry. We couldn't find your Duolingo profile."
+      "user-not-found":          "We're sorry. We couldn't find your Duolingo profile.",
     }
 
     return this.messageTarget.innerText = messages[key]
@@ -92,9 +96,35 @@ export default class extends Stimulus.Controller {
     return yesterday.isSame(streakEndDate, 'day')
   }
 
-  #findUser() {
+  async #findUser() {
     const username = this.usernameInputTarget.value;
 
+    if (this.#useLocalUsers()) { return this.#findLocalUser(username) }
+
+    return await this.#findDuolingoUser(username)
+  }
+
+  async #findDuolingoUser(username) {
+    const endpoint = `https://www.duolingo.com/2017-06-30/users?username=${username}`
+
+    try {
+      const response = await fetch(endpoint);
+
+      if (!response.ok) {
+        this.#displayMessage("error");
+        return undefined;
+      }
+
+      const data = await response.json();
+      return data["users"][0];
+    } catch (error) {
+      console.log("error trying to fetch Duolingo profile:", error);
+      this.#displayMessage("error");
+      return undefined;
+    }
+  }
+
+  #findLocalUser(username) {
     const users = {
       // streak extended today
       "mael": {"users":[{"username":"Maeldd","totalXp":3708,"streakData":{"currentStreak":{"startDate":"2025-02-12","length":7,"endDate":"2025-02-19"}}}]},
@@ -104,9 +134,12 @@ export default class extends Stimulus.Controller {
       "cecile": {"users":[{"username":"Cecile900074","totalXp":518886,"streakData":{"currentStreak":{"startDate":"2019-10-14","length":3116,"endDate":"2025-02-17"}}}]},
     }
 
-    // TODO: call Duolingo API to really find the user
-    let data = users[username] || { users: [] }
+    const data = users[username] || { users: [] }
 
     return data["users"][0]
+  }
+
+  #useLocalUsers() {
+    return this.localValue;
   }
 }
