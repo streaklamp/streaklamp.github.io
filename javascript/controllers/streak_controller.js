@@ -48,7 +48,7 @@ export default class extends Stimulus.Controller {
     }
     else if (this.#streakExtendedYesterday(streakEndDate)) {
       this.#displayMessage("streak-not-extended-yet")
-      this.#showLampColor(streakEndDate.format("HH"))
+      this.#showLampColor(dayjs().format("HH"))
     }
     else {
       this.#displayMessage("broken-streak")
