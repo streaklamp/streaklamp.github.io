@@ -72,7 +72,7 @@
         <form action="#" data-action="streak#check">
           <div class="mb-4">
             <label for="username" class="block font-medium text-gray-900 mb-1">What's your Duolingo username?</label>
-            <input type="text" required name="username" id="username" placeholder="eg. Cecile900074" data-streak-target="usernameInput" class="block w-full bg-white border border-gray-300 focus:ring-purple focus:border-purple rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm">
+            <input id="username" type="text" data-streak-target="usernameInput" required name="username" pattern="[\p{L}0-9._\-]+" placeholder="eg. Cecile900074" aria-label="Username must contain only valid characters (letters, numbers and '-', '.', '_')" class="block w-full bg-white border border-gray-300 focus:ring-purple focus:border-purple rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm not-placeholder-shown:invalid:border-red-600">
           </div>
 
           <div class="flex flex-col md:flex-row gap-3">

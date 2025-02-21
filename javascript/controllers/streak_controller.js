@@ -34,9 +34,14 @@ export default class extends Stimulus.Controller {
 
   async check(event) {
     event.preventDefault()
+
+    const username = this.usernameInputTarget.value;
+
+    if (this.#usernameInvalid(username)) { return this.#displayMessage("username-invalid") }
+
     this.#displayMessage("lookup-in-progress")
 
-    const user = await this.#findUser()
+    const user = await this.#findUser(username)
 
     if (user == undefined) { return this.#handleUserNotFound() }
 
@@ -71,6 +76,7 @@ export default class extends Stimulus.Controller {
       "streak-extended":         "congrats! you've extended your streak today",
       "streak-not-extended-yet": "Don't forget to practice today!",
       "user-not-found":          "We're sorry. We couldn't find your Duolingo profile.",
+      "username-invalid":        "Username must contain only letters, numbers and '-', '.', '_'",
     }
 
     return this.messageTarget.innerText = messages[key]
@@ -98,9 +104,7 @@ export default class extends Stimulus.Controller {
     return yesterday.isSame(streakEndDate, 'day')
   }
 
-  async #findUser() {
-    const username = this.usernameInputTarget.value;
-
+  async #findUser(username) {
     if (this.#useLocalUsers()) { return this.#findLocalUser(username) }
 
     return await this.#findDuolingoUser(username)
@@ -129,9 +133,9 @@ export default class extends Stimulus.Controller {
   #findLocalUser(username) {
     const users = {
       // streak extended today
-      "mael": {"users":[{"username":"Maeldd","totalXp":3708,"streakData":{"currentStreak":{"startDate":"2025-02-12","length":7,"endDate":"2025-02-19"}}}]},
+      "mael": {"users":[{"username":"Maeldd","totalXp":3708,"streakData":{"currentStreak":{"startDate":"2025-02-12","length":7,"endDate":"2025-02-21"}}}]},
       // streak extended yesterday
-      "nico": {"users":[{"username":"nfilzi","totalXp":74838,"streakData":{"currentStreak":{"startDate":"2023-03-23","length":693,"endDate":"2025-02-18"}}}]},
+      "nico": {"users":[{"username":"nfilzi","totalXp":74838,"streakData":{"currentStreak":{"startDate":"2023-03-23","length":693,"endDate":"2025-02-20"}}}]},
       // broken streak (ish)
       "cecile": {"users":[{"username":"Cecile900074","totalXp":518886,"streakData":{"currentStreak":{"startDate":"2019-10-14","length":3116,"endDate":"2025-02-17"}}}]},
     }
@@ -143,5 +147,10 @@ export default class extends Stimulus.Controller {
 
   #useLocalUsers() {
     return this.localValue;
+  }
+
+  #usernameInvalid(username) {
+    const regex = /^[\p{L}0-9._\-]+$/u
+    return !regex.test(username);
   }
 }
