@@ -4,6 +4,8 @@ export default class extends Stimulus.Controller {
 
   static COLORS = {
     "broken": "#d7006c",
+    "on": "transparent",
+    "off": "#000000",
     "00": "#15a0e3",
     "01": "#15a0e3",
     "02": "#15a0e3",
@@ -48,7 +50,7 @@ export default class extends Stimulus.Controller {
     const streakEndDate = dayjs(user["streakData"]["currentStreak"]["endDate"])
 
     if (this.#streakExtendedToday(streakEndDate)) {
-      this.#hideLampColor()
+      this.#showLampColor("on")
       this.#displayMessage("streak-extended")
     }
     else if (this.#streakExtendedYesterday(streakEndDate)) {
@@ -64,7 +66,7 @@ export default class extends Stimulus.Controller {
   reset(event) {
     event.preventDefault()
 
-    this.#hideLampColor()
+    this.#resetLampColor()
     this.messageTarget.innerText = ""
   }
 
@@ -84,14 +86,13 @@ export default class extends Stimulus.Controller {
 
   #handleUserNotFound() {
     this.#displayMessage("user-not-found")
-    this.#hideLampColor()
+    this.#resetLampColor()
   }
 
-  #hideLampColor() { this.lampColorTarget.classList.add("hidden") }
+  #resetLampColor() { this.#showLampColor("off") }
 
   #showLampColor(key) {
-    this.lampColorTarget.style.backgroundColor = this.constructor.COLORS[key]
-    this.lampColorTarget.classList.remove("hidden")
+    this.lampColorTarget.style.fill = this.constructor.COLORS[key]
   }
 
   #streakExtendedToday(streakEndDate) {
@@ -133,9 +134,9 @@ export default class extends Stimulus.Controller {
   #findLocalUser(username) {
     const users = {
       // streak extended today
-      "mael": {"users":[{"username":"Maeldd","totalXp":3708,"streakData":{"currentStreak":{"startDate":"2025-02-12","length":7,"endDate":"2025-02-21"}}}]},
+      "mael": {"users":[{"username":"Maeldd","totalXp":3708,"streakData":{"currentStreak":{"startDate":"2025-02-12","length":7,"endDate":"2025-02-22"}}}]},
       // streak extended yesterday
-      "nico": {"users":[{"username":"nfilzi","totalXp":74838,"streakData":{"currentStreak":{"startDate":"2023-03-23","length":693,"endDate":"2025-02-20"}}}]},
+      "nico": {"users":[{"username":"nfilzi","totalXp":74838,"streakData":{"currentStreak":{"startDate":"2023-03-23","length":693,"endDate":"2025-02-21"}}}]},
       // broken streak (ish)
       "cecile": {"users":[{"username":"Cecile900074","totalXp":518886,"streakData":{"currentStreak":{"startDate":"2019-10-14","length":3116,"endDate":"2025-02-17"}}}]},
     }
